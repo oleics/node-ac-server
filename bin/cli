@@ -1,0 +1,151 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var path = require('path');
+var http = require('http');
+var express = require('express');
+
+var argv = require('minimist')(require('minimist')(process.argv.slice(2))._);
+var cwd = argv.cwd || process.env.PWD || process.cwd();
+
+Promise.resolve({
+  port: process.env.PORT || 3000,
+  cwd: cwd,
+  routesJs: 'routes.js',
+  routesJsLookupFolders: [
+    cwd,
+    process.env.PWD,
+    process.cwd()
+  ],
+  staticFolders: [
+    path.join(cwd, 'build/browser'),
+  ],
+})
+  .then(runMainOrLeafServer)
+  .then(searchRoutesJs)
+  .then(createAndRunApp)
+  .then(function(ctx){
+    // console.dir(ctx);
+    console.log('OK up and running');
+  })
+  .catch(function(err){
+    console.error(err.stack||err);
+    process.exit(1);
+  })
+;
+
+// server
+
+function runMainOrLeafServer(ctx) {
+  return new Promise(function(resolve, reject) {
+    var server = http.createServer();
+    server.once('error', onceError);
+    server.once('listening', onceListening);
+
+    server.listen(ctx.port);
+
+    function onceListening() {
+      server.removeListener('error', onceError);
+      var url = getServerUrl(server);
+      console.log('Listening: %s (main)', url);
+      ctx.server = server;
+      resolve(ctx);
+    }
+
+    function onceError(err) {
+      server.removeListener('listening', onceListening);
+      if(err.code !== 'EADDRINUSE') {
+        return reject(err);
+      }
+      resolve(runLeafServer(ctx));
+    }
+  });
+}
+
+function runLeafServer(ctx) {
+  return new Promise(function(resolve, reject) {
+    var server = http.createServer();
+    server.once('listening', onceListening);
+    server.once('error', onceError);
+    server.listen();
+    function onceListening() {
+      server.removeListener('error', onceError);
+      var url = getServerUrl(server);
+      console.log('Listening: %s (leaf)', url);
+      ctx.server = server;
+      resolve(ctx);
+    }
+    function onceError(err) {
+      server.removeListener('listening', onceListening);
+      if(err.code !== 'EADDRINUSE') {
+        return reject(err);
+      }
+      resolve(runLeafServer(ctx));
+    }
+  });
+}
+
+function getMainServerUrl(ctx) {
+  var url = 'http://localhost:'+ctx.port;
+  return url;
+}
+
+function getServerUrl(server) {
+  var address = server.address();
+  var url = 'http://localhost:'+address.port;
+  return url;
+}
+
+// app
+
+function createAndRunApp(ctx) {
+  var app = express();
+  app.enable('strict routing');
+  app.disable('x-powered-by');
+
+  // register all routes
+  ctx.routing && ctx.routing.routes.forEach(function(route){
+    app.use(route.path, route.fn);
+  });
+
+  // static folders
+  ctx.staticFolders.forEach(function(folder){
+    app.use(express.static(folder));
+  });
+
+  ctx.server.on('request', app);
+
+  ctx.app = app;
+  return ctx;
+}
+
+// routes
+
+function searchRoutesJs(ctx) {
+  var folders = ctx.routesJsLookupFolders.slice(0);
+  return lookupAndLoad();
+  function lookupAndLoad() {
+    if(!folders.length) {
+      return Promise.resolve(ctx);
+    }
+    return loadRoutesJs(folders.shift(), ctx.routesJs)
+      .then(function(routing){
+        ctx.routing = routing;
+        return ctx;
+      })
+      .catch(function(err){
+        return lookupAndLoad();
+      })
+    ;
+  }
+}
+
+function loadRoutesJs(folder, routesJs) {
+  return new Promise(function(resolve, reject) {
+    var file = path.join(folder, routesJs||'routes.js');
+    fs.stat(file, function(err, s) {
+      if(err) return reject(err);
+      resolve(require(file));
+    });
+  });
+}

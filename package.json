@@ -1,0 +1,23 @@
+{
+  "name": "ac-server",
+  "version": "0.0.0",
+  "description": "A simple http web server in nodejs with express.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "oleics/node-ac-server",
+  "author": "Oliver Leics <oliver.leics@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oleics/node-ac-server/issues"
+  },
+  "homepage": "https://github.com/oleics/node-ac-server#readme",
+  "bin": {
+    "ac-server": "./bin/cli"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "minimist": "^1.2.0"
+  }
+}
