@@ -1,6 +1,6 @@
 {
   "name": "ac-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A simple http web server in nodejs with express.",
   "main": "index.js",
   "scripts": {
