@@ -7,6 +7,7 @@ var all = {};
   require('./src/app'),
   require('./src/routes'),
   require('./src/batteries'),
+  require('./src/service-proxy'),
 ].forEach(function(api){
   Object.keys(api).forEach(function(key){
     if(all[key] != null) {

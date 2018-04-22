@@ -5,6 +5,7 @@ module.exports = {
   runMainOrLeafServer: runMainOrLeafServer,
   runLeafServer: runLeafServer,
   getMainServerUrl: getMainServerUrl,
+  getServerUrl: getServerUrl,
   setContextOnRequests: setContextOnRequests,
 };
 
