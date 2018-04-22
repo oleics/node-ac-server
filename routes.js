@@ -4,7 +4,10 @@ var routes = [];
 routes.push({
   path: '/',
   fn: function(req, res, next) {
-    res.json({}).end();
+    res.json({
+      name: req.ctx.pkg.name,
+      version: req.ctx.pkg.version,
+    }).end();
   },
 });
 

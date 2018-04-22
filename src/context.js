@@ -12,9 +12,14 @@ function createContext(ctx) {
   var argv = minimist(minimist(process.argv.slice(2))._);
   var cwd = argv.cwd || process.env.PWD || process.cwd();
 
+  var lpkg = require(__dirname+'/../package.json');
+  var pkg = require(cwd+'/package.json');
+
   ctx = {
     port: process.env.PORT || 3000,
     cwd: cwd,
+    lpkg: lpkg,
+    pkg: pkg,
     routesJs: 'routes.js',
     routesJsLookupFolders: [
       cwd,
