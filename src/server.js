@@ -5,6 +5,7 @@ module.exports = {
   runMainOrLeafServer: runMainOrLeafServer,
   runLeafServer: runLeafServer,
   getMainServerUrl: getMainServerUrl,
+  setContextOnRequests: setContextOnRequests,
 };
 
 function runMainOrLeafServer(ctx) {
@@ -20,7 +21,7 @@ function runMainOrLeafServer(ctx) {
       var url = getServerUrl(server);
       console.log('Listening: %s (main)', url);
       ctx.server = server;
-      resolve(ctx);
+      resolve(setContextOnRequests(ctx));
     }
 
     function onceError(err) {
@@ -44,7 +45,7 @@ function runLeafServer(ctx) {
       var url = getServerUrl(server);
       console.log('Listening: %s (leaf)', url);
       ctx.server = server;
-      resolve(ctx);
+      resolve(setContextOnRequests(ctx));
     }
     function onceError(err) {
       server.removeListener('listening', onceListening);
@@ -65,4 +66,13 @@ function getServerUrl(server) {
   var address = server.address();
   var url = 'http://localhost:'+address.port;
   return url;
+}
+
+function setContextOnRequests(ctx) {
+  ctx.server.on('request', function(req, res){
+    if(req.ctx == null) {
+      req.ctx = ctx;
+    }
+  });
+  return ctx;
 }
