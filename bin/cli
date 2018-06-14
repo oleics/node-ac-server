@@ -6,6 +6,8 @@ var createContext = api.createContext;
 
 var runMainOrLeafServer = api.runMainOrLeafServer;
 
+var handleServerUpgrade = api.handleServerUpgrade;
+
 var createApp = api.createApp;
 var bindAppToServer = api.bindAppToServer;
 
@@ -23,6 +25,7 @@ Promise.resolve(createContext())
     .then(searchAndUseRoutesJs)
     .then(serveStaticFiles)
   .then(bindAppToServer)
+  .then(handleServerUpgrade)
   .then(registerWithMainServiceProxy)
   .then(function(ctx){
     // console.dir(ctx);

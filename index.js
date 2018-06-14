@@ -4,6 +4,7 @@ var all = {};
 [
   require('./src/context'),
   require('./src/server'),
+  require('./src/server-upgrade'),
   require('./src/app'),
   require('./src/routes'),
   require('./src/batteries'),
