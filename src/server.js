@@ -22,6 +22,7 @@ function runMainOrLeafServer(ctx) {
       var url = getServerUrl(server);
       console.log('Listening: %s (main)', url);
       ctx.server = server;
+      ctx.isMainServer = true;
       resolve(setContextOnRequests(ctx));
     }
 

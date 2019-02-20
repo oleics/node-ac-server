@@ -133,7 +133,7 @@ function createServiceProxy(app, p, mainUrl) {
 }
 
 function registerWithMainServiceProxy(ctx) {
-  if(getServerUrl(ctx.server) !== getMainServerUrl(ctx)) {
+  if(true !== ctx.isMainServer && getServerUrl(ctx.server) !== getMainServerUrl(ctx)) {
     ctx.serviceProxy.register(ctx.pkg.name, getServerUrl(ctx.server));
   }
   // if(ctx.pkg.name !== ctx.lpkg.name) {
