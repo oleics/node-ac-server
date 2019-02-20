@@ -29,6 +29,7 @@ module.exports = Promise.resolve(createContext())
   .then(function(ctx){
     // console.dir(ctx);
     console.log('OK up and running');
+    return ctx;
   })
   .catch(function(err){
     console.error(err.stack||err);
