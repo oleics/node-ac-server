@@ -65,8 +65,12 @@ function getMainServerUrl(ctx) {
 }
 
 function getServerUrl(server) {
-  var address = server.address();
-  var url = 'http://localhost:'+address.port;
+  var address = server.address(), url;
+  if(typeof address === 'string' || address instanceof String) {
+    url = address;
+  } else {
+    url = 'http://localhost:'+address.port;
+  }
   return url;
 }
 
