@@ -17,7 +17,7 @@ var serveStaticFiles = api.serveStaticFiles;
 
 //
 
-Promise.resolve(createContext())
+module.exports = Promise.resolve(createContext())
   .then(runMainOrLeafServer)
   .then(createApp)
     .then(createAndUseServiceProxy)
