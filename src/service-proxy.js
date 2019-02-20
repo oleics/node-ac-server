@@ -139,4 +139,5 @@ function registerWithMainServiceProxy(ctx) {
   // if(ctx.pkg.name !== ctx.lpkg.name) {
   //   ctx.serviceProxy.register(ctx.pkg.name, getServerUrl(ctx.server));
   // }
+  return ctx;
 }
